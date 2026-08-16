@@ -1,0 +1,81 @@
+/* pages/me/me.wxss */
+.me-header {
+  display: flex;
+  align-items: center;
+}
+
+.me-avatar {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 50%;
+  background: #1890ff;
+  color: #fff;
+  font-size: 40rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 24rpx;
+}
+
+.me-name {
+  font-size: 34rpx;
+  font-weight: 600;
+}
+
+.me-sub {
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 6rpx;
+}
+
+.me-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 30rpx;
+  font-weight: 600;
+  margin-bottom: 16rpx;
+}
+
+.me-add {
+  font-size: 26rpx;
+  color: #1890ff;
+  font-weight: 400;
+}
+
+.emp-form {
+  background: #f9fafb;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  margin-bottom: 20rpx;
+}
+
+.emp-input {
+  margin-bottom: 16rpx;
+}
+
+.emp-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.emp-item:last-child {
+  border-bottom: none;
+}
+
+.emp-name {
+  font-size: 28rpx;
+}
+
+.emp-sub {
+  font-size: 22rpx;
+  color: #999;
+}
+
+.emp-del {
+  font-size: 24rpx;
+  color: #ff4d4f;
+}

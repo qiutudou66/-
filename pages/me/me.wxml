@@ -1,0 +1,40 @@
+<!-- pages/me/me.wxml - 我的 -->
+<view class="container" wx:if="{{user}}">
+
+  <!-- 账号信息 -->
+  <view class="card me-header">
+    <view class="me-avatar">{{avatar}}</view>
+    <view class="me-info">
+      <view class="me-name">{{user.name || user.username}}</view>
+      <view class="me-sub">@{{user.username}} · {{user.role === 'boss' ? '老板' : '员工'}}</view>
+      <view class="me-sub" wx:if="{{user.store_name}}">店铺：{{user.store_name}}</view>
+    </view>
+  </view>
+
+  <!-- 员工管理（仅老板） -->
+  <view class="card" wx:if="{{isBoss}}">
+    <view class="me-section-header">
+      <text>员工账号</text>
+      <text class="me-add" bindtap="toggleAdd">{{showAdd ? '收起' : '＋ 添加'}}</text>
+    </view>
+
+    <view class="emp-form" wx:if="{{showAdd}}">
+      <input class="form-input emp-input" placeholder="员工账号" value="{{empUsername}}" bindinput="onEmpUsername" />
+      <input class="form-input emp-input" password="true" placeholder="密码（至少6位）" value="{{empPassword}}" bindinput="onEmpPassword" />
+      <input class="form-input emp-input" placeholder="姓名/昵称" value="{{empName}}" bindinput="onEmpName" />
+      <button class="btn-primary" bindtap="onAddEmployee" loading="{{adding}}">添加员工</button>
+    </view>
+
+    <view class="emp-item" wx:for="{{employees}}" wx:key="id">
+      <view>
+        <view class="emp-name">{{item.name || item.username}}</view>
+        <view class="emp-sub">@{{item.username}}</view>
+      </view>
+      <text class="emp-del" catchtap="onRemoveEmployee" data-id="{{item.id}}" data-username="{{item.username}}">移除</text>
+    </view>
+    <view class="empty" wx:if="{{employees.length === 0 && !showAdd}}">还没有员工账号</view>
+  </view>
+
+  <button class="btn-danger" bindtap="onLogout">退出登录</button>
+
+</view>

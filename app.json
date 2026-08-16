@@ -1,0 +1,54 @@
+{
+  "pages": [
+    "pages/login/login",
+    "pages/index/index",
+    "pages/stock/list/list",
+    "pages/recycle/create/create",
+    "pages/detail/detail",
+    "pages/sell/sell",
+    "pages/return/return",
+    "pages/flow/list/list",
+    "pages/me/me"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#1f2d3d",
+    "navigationBarTitleText": "数码宝贝",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f5f6f8"
+  },
+  "tabBar": {
+    "color": "#9aa0a6",
+    "selectedColor": "#1890ff",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "images/home.png",
+        "selectedIconPath": "images/home-active.png"
+      },
+      {
+        "pagePath": "pages/stock/list/list",
+        "text": "库存",
+        "iconPath": "images/stock.png",
+        "selectedIconPath": "images/stock-active.png"
+      },
+      {
+        "pagePath": "pages/flow/list/list",
+        "text": "流水",
+        "iconPath": "images/flow.png",
+        "selectedIconPath": "images/flow-active.png"
+      },
+      {
+        "pagePath": "pages/me/me",
+        "text": "我的",
+        "iconPath": "images/me.png",
+        "selectedIconPath": "images/me-active.png"
+      }
+    ]
+  },
+  "cloud": true,
+  "sitemapLocation": "sitemap.json"
+}

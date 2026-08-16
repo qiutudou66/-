@@ -1,0 +1,90 @@
+<!-- pages/index/index.wxml - 首页看板 -->
+<view class="container">
+
+  <!-- 品牌横幅 -->
+  <view class="banner">
+    <view class="banner-title">{{storeName}}</view>
+    <view class="banner-date">{{dateText}}</view>
+  </view>
+
+  <!-- 库存统计卡片 -->
+  <view class="summary-bar">
+    <view class="summary-item" bindtap="goStock">
+      <view class="summary-label">在库</view>
+      <view class="summary-value">{{counts.in_stock}}</view>
+    </view>
+    <view class="summary-item" bindtap="goStock">
+      <view class="summary-label">已售</view>
+      <view class="summary-value">{{counts.sold}}</view>
+    </view>
+    <view class="summary-item" bindtap="goStock">
+      <view class="summary-label">退货</view>
+      <view class="summary-value">{{counts.returned}}</view>
+    </view>
+    <view class="summary-item" bindtap="goStock">
+      <view class="summary-label">退上家</view>
+      <view class="summary-value">{{counts.supplier}}</view>
+    </view>
+  </view>
+
+  <!-- 今日收支 -->
+  <view class="card">
+    <view class="money-row">
+      <view class="money-item">
+        <view class="money-label">今日收入</view>
+        <view class="money-value income">+{{today.income}}</view>
+      </view>
+      <view class="money-item">
+        <view class="money-label">今日支出</view>
+        <view class="money-value expense">-{{today.expense}}</view>
+      </view>
+      <view class="money-item">
+        <view class="money-label">今日利润</view>
+        <view class="money-value profit">{{today.profit}}</view>
+      </view>
+    </view>
+    <view class="money-row border-top">
+      <view class="money-item">
+        <view class="money-label">本月收入</view>
+        <view class="money-value income">+{{month.income}}</view>
+      </view>
+      <view class="money-item">
+        <view class="money-label">本月支出</view>
+        <view class="money-value expense">-{{month.expense}}</view>
+      </view>
+      <view class="money-item">
+        <view class="money-label">本月利润</view>
+        <view class="money-value profit">{{month.profit}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 收机快捷入口 -->
+  <view class="card action-card">
+    <button class="btn-primary" bindtap="goRecycle">＋ 收机录入</button>
+    <view class="action-hint">录入一台手机，自动记一笔支出</view>
+  </view>
+
+  <!-- 最近流水 -->
+  <view class="card">
+    <view class="section-header">
+      <text>最近流水</text>
+      <text class="section-more" bindtap="goFlows">全部 ›</text>
+    </view>
+    <view class="flow-item" wx:for="{{recentFlows}}" wx:key="_id" bindtap="goDetail" data-id="{{item.phone_id}}">
+      <view class="flow-left">
+        <view class="flow-title">
+          <text>{{item.brand}} {{item.model}}</text>
+          <text class="flow-memory">{{item.memory}}</text>
+        </view>
+        <text class="tag tag-blue">{{item.typeText}}</text>
+      </view>
+      <view class="flow-right">
+        <text class="flow-amount {{item.amountClass}}">{{item.amountText}}</text>
+        <text class="flow-date">{{item.date}}</text>
+      </view>
+    </view>
+    <view class="empty" wx:if="{{recentFlows.length === 0}}">暂无流水</view>
+  </view>
+
+</view>

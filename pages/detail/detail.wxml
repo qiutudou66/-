@@ -1,0 +1,125 @@
+<!-- pages/detail/detail.wxml - 手机详情 -->
+<view class="container" wx:if="{{phone}}">
+
+  <!-- 手机属性 -->
+  <view class="card">
+    <view class="detail-header">
+      <text class="detail-name">{{phone.brand}} {{phone.model}}</text>
+      <text class="tag {{phone.statusClass}}">{{phone.statusText}}</text>
+    </view>
+    <view class="detail-row">
+      <text class="detail-label">容量</text>
+      <text>{{phone.memory}}</text>
+    </view>
+    <view class="detail-row" wx:if="{{phone.battery}}">
+      <text class="detail-label">电池寿命</text>
+      <text>{{phone.battery}}</text>
+    </view>
+    <view class="detail-row">
+      <text class="detail-label">颜色</text>
+      <text>{{phone.color || '-'}}</text>
+    </view>
+    <view class="detail-row">
+      <text class="detail-label">成色</text>
+      <text>{{phone.gradeText}}</text>
+    </view>
+    <view class="detail-row">
+      <text class="detail-label">IMEI</text>
+      <text class="detail-imei">{{phone.imei}}</text>
+    </view>
+    <view class="detail-row">
+      <text class="detail-label">回收日期</text>
+      <text>{{phone.recycle_date}}</text>
+    </view>
+    <view class="detail-row">
+      <text class="detail-label">成本价</text>
+      <text>¥{{phone.costText}}</text>
+    </view>
+    <view class="detail-row" wx:if="{{phone.expectText}}">
+      <text class="detail-label">期望售价</text>
+      <text>¥{{phone.expectText}}</text>
+    </view>
+    <view class="detail-row" wx:if="{{phone.sellText}}">
+      <text class="detail-label">成交价</text>
+      <text class="price">¥{{phone.sellText}}</text>
+    </view>
+    <view class="detail-row" wx:if="{{phone.sell_date}}">
+      <text class="detail-label">售出日期</text>
+      <text>{{phone.sell_date}}</text>
+    </view>
+    <view class="detail-row" wx:if="{{phone.return_date}}">
+      <text class="detail-label">退货日期</text>
+      <text>{{phone.return_date}}</text>
+    </view>
+    <view class="detail-row" wx:if="{{phone.return_person}}">
+      <text class="detail-label">退货人</text>
+      <text>{{phone.return_person}}<text wx:if="{{phone.return_phone}}"> {{phone.return_phone}}</text></text>
+    </view>
+    <view class="detail-row" wx:if="{{phone.refundText}}">
+      <text class="detail-label">退款金额</text>
+      <text class="price">¥{{phone.refundText}}</text>
+    </view>
+    <view class="detail-row" wx:if="{{phone.detail}}">
+      <text class="detail-label">物品详情</text>
+      <text class="detail-text">{{phone.detail}}</text>
+    </view>
+    <view class="detail-row" wx:if="{{phone.remark}}">
+      <text class="detail-label">备注</text>
+      <text>{{phone.remark}}</text>
+    </view>
+  </view>
+
+  <!-- 回收图片 -->
+  <view class="card" wx:if="{{phone.images.length > 0}}">
+    <view class="card-title">回收图片</view>
+    <view class="img-list">
+      <image
+        class="img-thumb"
+        wx:for="{{phone.images}}"
+        wx:key="*this"
+        src="{{item}}"
+        mode="aspectFill"
+        bindtap="onPreviewImage"
+        data-src="{{item}}"
+      />
+    </view>
+  </view>
+
+  <!-- 回收人信息 -->
+  <view class="card" wx:if="{{phone.seller_name || phone.seller_id || phone.seller_phone}}">
+    <view class="card-title">回收人信息</view>
+    <view class="detail-row" wx:if="{{phone.seller_name}}">
+      <text class="detail-label">姓名</text>
+      <text>{{phone.seller_name}}</text>
+    </view>
+    <view class="detail-row" wx:if="{{phone.seller_id}}">
+      <text class="detail-label">证件号</text>
+      <text>{{phone.seller_id}}</text>
+    </view>
+    <view class="detail-row" wx:if="{{phone.seller_phone}}">
+      <text class="detail-label">联系方式</text>
+      <text>{{phone.seller_phone}}</text>
+    </view>
+  </view>
+
+  <!-- 流水时间线 -->
+  <view class="card">
+    <view class="card-title">流水记录</view>
+    <view class="flow-item" wx:for="{{flows}}" wx:key="_id">
+      <view>
+        <text class="tag tag-blue">{{item.typeText}}</text>
+        <text class="flow-date">{{item.date}}</text>
+      </view>
+      <text class="flow-amount {{item.amountClass}}">{{item.amountText}}</text>
+    </view>
+    <view class="empty" wx:if="{{flows.length === 0}}">暂无流水</view>
+  </view>
+
+  <!-- 底部操作 -->
+  <view class="action-bar" wx:if="{{saleable || sold}}">
+    <button wx:if="{{saleable}}" class="btn-primary" bindtap="goSell">卖出</button>
+    <button wx:if="{{inStock && isBoss}}" class="btn-warn action-margin" bindtap="onReturnSupplier">退给上家</button>
+    <button wx:if="{{sold}}" class="btn-warn action-margin" bindtap="onReturn">销售退货</button>
+  </view>
+
+</view>

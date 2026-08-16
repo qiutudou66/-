@@ -1,0 +1,48 @@
+<!-- pages/return/return.wxml - 销售退货 -->
+<view class="container" wx:if="{{phone}}">
+
+  <view class="card">
+    <view class="detail-name">{{phone.brand}} {{phone.model}} {{phone.memory}}</view>
+    <view class="detail-sub">{{phone.color || ''}} {{phone.imei}}</view>
+    <view class="cost-line">
+      <text>原成交价</text>
+      <text class="price">¥{{sellText}}</text>
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{!result}}">
+    <view class="form-group">
+      <view class="form-label">退货金额 *</view>
+      <input class="form-input" type="digit" placeholder="默认退全额成交价" value="{{refundPrice}}" bindinput="onRefund" />
+    </view>
+    <view class="form-group">
+      <view class="form-label">退货日期 *</view>
+      <picker mode="date" value="{{date}}" bindchange="onDate">
+        <view class="form-input">{{date}}</view>
+      </picker>
+    </view>
+    <view class="form-group">
+      <view class="form-label">退货人姓名</view>
+      <input class="form-input" placeholder="买家姓名" value="{{returnerName}}" bindinput="onName" />
+    </view>
+    <view class="form-group">
+      <view class="form-label">退货人电话</view>
+      <input class="form-input" type="number" placeholder="买家联系方式" value="{{returnerPhone}}" bindinput="onPhone" />
+    </view>
+    <view class="form-group">
+      <view class="form-label">备注</view>
+      <input class="form-input" placeholder="退货原因等说明" value="{{remark}}" bindinput="onRemark" />
+    </view>
+    <button class="btn-primary" bindtap="onSubmit" loading="{{submitting}}">确认退货</button>
+  </view>
+
+  <view class="card result-card" wx:else>
+    <view class="result-title">已退货</view>
+    <view class="result-row">
+      <text>退款金额</text>
+      <text class="price">¥{{result.refund}}</text>
+    </view>
+    <button class="btn-primary" bindtap="goBack">完成</button>
+  </view>
+
+</view>

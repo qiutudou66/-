@@ -1,0 +1,42 @@
+/* pages/return/return.wxss - 销售退货 */
+.detail-name {
+  font-size: 34rpx;
+  font-weight: 600;
+}
+
+.detail-sub {
+  font-size: 26rpx;
+  color: #999;
+  margin: 8rpx 0 20rpx;
+}
+
+.cost-line {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 16rpx;
+  border-top: 1rpx solid #f0f0f0;
+  font-size: 28rpx;
+}
+
+.result-card {
+  text-align: center;
+}
+
+.result-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #faad14;
+  margin-bottom: 20rpx;
+}
+
+.result-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 14rpx 0;
+  font-size: 28rpx;
+  color: #666;
+}
+
+button {
+  margin-top: 16rpx;
+}

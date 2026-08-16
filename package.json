@@ -1,0 +1,7 @@
+{
+  "name": "yin-mi-mp",
+  "version": "1.0.0",
+  "description": "商贸管账微信小程序",
+  "main": "app.js",
+  "dependencies": {}
+}

@@ -1,0 +1,67 @@
+<!-- pages/flow/list/list.wxml - 流水/收支统计 -->
+<view class="container">
+
+  <!-- 日/月切换 -->
+  <view class="view-tabs">
+    <view class="view-tab {{view === 'day' ? 'active' : ''}}" bindtap="onViewDay">按日</view>
+    <view class="view-tab {{view === 'month' ? 'active' : ''}}" bindtap="onViewMonth">按月</view>
+  </view>
+
+  <!-- 日期选择 -->
+  <view class="date-bar">
+    <picker mode="date" value="{{date}}" bindchange="onDateChange" wx:if="{{view === 'day'}}">
+      <view class="date-item">{{date}} ▾</view>
+    </picker>
+    <picker mode="date" fields="month" value="{{month}}" bindchange="onMonthChange" wx:else>
+      <view class="date-item">{{month}} ▾</view>
+    </picker>
+  </view>
+
+  <!-- 汇总 -->
+  <view class="card">
+    <view class="money-row">
+      <view class="money-item">
+        <view class="money-label">收入</view>
+        <view class="money-value income">+{{summary.income}}</view>
+      </view>
+      <view class="money-item">
+        <view class="money-label">支出</view>
+        <view class="money-value expense">-{{summary.expense}}</view>
+      </view>
+      <view class="money-item">
+        <view class="money-label">利润</view>
+        <view class="money-value profit">{{summary.profit}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 类型筛选 -->
+  <view class="type-tabs">
+    <view
+      wx:for="{{types}}"
+      wx:key="key"
+      class="type-tab {{activeType === item.key ? 'active' : ''}}"
+      data-key="{{item.key}}"
+      bindtap="onTypeTap"
+    >{{item.text}}</view>
+  </view>
+
+  <!-- 明细 -->
+  <view class="card">
+    <view class="flow-item" wx:for="{{list}}" wx:key="_id" bindtap="goDetail" data-phone-id="{{item.phone_id}}">
+      <view class="flow-left">
+        <view class="flow-title">
+          <text>{{item.brand}} {{item.model}}</text>
+          <text class="flow-memory">{{item.memory}}</text>
+        </view>
+        <view class="flow-meta">
+          <text class="tag tag-blue">{{item.typeText}}</text>
+          <text class="flow-date">{{item.date}}</text>
+        </view>
+      </view>
+      <text class="flow-amount {{item.amountClass}}">{{item.amountText}}</text>
+    </view>
+    <view class="empty" wx:if="{{list.length === 0}}">该区间暂无流水</view>
+  </view>
+
+</view>

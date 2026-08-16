@@ -1,0 +1,29 @@
+<!-- pages/login/login.wxml -->
+<view class="login-page">
+  <view class="logo">
+    <text class="logo-text">数码宝贝</text>
+    <text class="logo-sub">二手手机 · 回收 / 销售</text>
+  </view>
+
+  <view class="card login-form">
+    <view class="form-group">
+      <view class="form-label">用户名</view>
+      <input class="form-input" placeholder="新账号将自动注册" value="{{username}}" bindinput="onUsernameInput" />
+    </view>
+    <view class="form-group">
+      <view class="form-label">密码</view>
+      <input class="form-input" placeholder="请输入密码" password="true" value="{{password}}" bindinput="onPasswordInput" />
+    </view>
+    <view class="form-group">
+      <view class="form-label">店铺名称</view>
+      <input class="form-input" placeholder="新账号填，默认来财" value="{{storeName}}" bindinput="onStoreNameInput" />
+    </view>
+    <view class="form-group">
+      <view class="form-label">昵称</view>
+      <input class="form-input" placeholder="新账号填，可不填" value="{{nickname}}" bindinput="onNicknameInput" />
+    </view>
+    <button class="btn-primary" bindtap="onLogin" loading="{{loading}}">登录 / 注册</button>
+  </view>
+
+  <view class="login-tip">账号存在直接登录，没有则自动注册（店铺名称默认来财）</view>
+</view>

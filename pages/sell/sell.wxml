@@ -1,0 +1,42 @@
+<!-- pages/sell/sell.wxml - 卖出确认 -->
+<view class="container" wx:if="{{phone}}">
+
+  <view class="card">
+    <view class="detail-name">{{phone.brand}} {{phone.model}} {{phone.memory}}</view>
+    <view class="detail-sub">{{phone.color || ''}} {{phone.imei}}</view>
+    <view class="cost-line">
+      <text>成本价</text>
+      <text class="price">¥{{costText}}</text>
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{!result}}">
+    <view class="form-group">
+      <view class="form-label">成交价 *</view>
+      <input class="form-input" type="digit" placeholder="请输入卖出价格" value="{{sellPrice}}" bindinput="onPrice" />
+    </view>
+    <view class="form-group">
+      <view class="form-label">出库备注</view>
+      <input class="form-input" placeholder="买家、渠道等说明" value="{{remark}}" bindinput="onRemark" />
+    </view>
+    <button class="btn-primary" bindtap="onSell" loading="{{submitting}}">确认卖出</button>
+  </view>
+
+  <view class="card result-card" wx:else>
+    <view class="result-title">已卖出</view>
+    <view class="result-row">
+      <text>成交价</text>
+      <text>¥{{result.sellPrice}}</text>
+    </view>
+    <view class="result-row">
+      <text>成本</text>
+      <text>¥{{result.costPrice}}</text>
+    </view>
+    <view class="result-row profit-row">
+      <text>本单利润</text>
+      <text class="price">¥{{result.profit}}</text>
+    </view>
+    <button class="btn-primary" bindtap="goDetail">完成</button>
+  </view>
+
+</view>

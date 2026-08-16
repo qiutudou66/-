@@ -1,0 +1,103 @@
+<!-- pages/recycle/create/create.wxml - 收机录入 -->
+<view class="container">
+  <button class="btn-primary ocr-btn" bindtap="onOcr" loading="{{recognizing}}">拍照识别贴纸（自动填型号/容量/IMEI）</button>
+  <view class="card">
+    <view class="form-group">
+      <view class="form-label">IMEI *</view>
+      <input class="form-input" placeholder="手机唯一标识码" value="{{imei}}" bindinput="onImei" maxlength="32" />
+    </view>
+
+    <view class="form-row">
+      <view class="form-group half">
+        <view class="form-label">品牌 *</view>
+        <picker range="{{brands}}" value="{{brandIndex}}" bindchange="onBrand">
+          <view class="form-input picker">{{brands[brandIndex]}} ▾</view>
+        </picker>
+      </view>
+      <view class="form-group half">
+        <view class="form-label">型号 *</view>
+        <input class="form-input" placeholder="如 iPhone 13" value="{{model}}" bindinput="onModel" />
+      </view>
+    </view>
+
+    <view class="form-row">
+      <view class="form-group half">
+        <view class="form-label">容量 *</view>
+        <input class="form-input" placeholder="如 256G" value="{{memory}}" bindinput="onMemory" />
+      </view>
+      <view class="form-group half">
+        <view class="form-label">颜色</view>
+        <input class="form-input" placeholder="如 黑色" value="{{color}}" bindinput="onColor" />
+      </view>
+    </view>
+
+    <view class="form-row">
+      <view class="form-group half">
+        <view class="form-label">成色</view>
+        <picker range="{{grades}}" value="{{gradeIndex}}" bindchange="onGrade">
+          <view class="form-input picker">{{grades[gradeIndex]}} ▾</view>
+        </picker>
+      </view>
+      <view class="form-group half">
+        <view class="form-label">回收日期</view>
+        <picker mode="date" value="{{recycleDate}}" bindchange="onDate">
+          <view class="form-input picker">{{recycleDate}}</view>
+        </picker>
+      </view>
+    </view>
+
+    <view class="form-group">
+      <view class="form-label">电池寿命</view>
+      <input class="form-input" placeholder="如 90%" value="{{battery}}" bindinput="onBattery" />
+    </view>
+
+    <view class="form-row">
+      <view class="form-group half">
+        <view class="form-label">成本价(收价) *</view>
+        <input class="form-input" type="digit" placeholder="0.00" value="{{costPrice}}" bindinput="onCost" />
+      </view>
+      <view class="form-group half">
+        <view class="form-label">期望售价</view>
+        <input class="form-input" type="digit" placeholder="可后填" value="{{expectPrice}}" bindinput="onExpect" />
+      </view>
+    </view>
+
+    <view class="form-group">
+      <view class="form-label">物品详情</view>
+      <textarea class="form-input form-textarea" placeholder="外观、功能、配件情况等" value="{{detail}}" bindinput="onDetail" maxlength="500" />
+    </view>
+
+    <view class="form-group">
+      <view class="form-label">回收物品图片</view>
+      <view class="img-list">
+        <view class="img-item" wx:for="{{images}}" wx:key="*this">
+          <image class="img-thumb" src="{{item}}" mode="aspectFill" bindtap="onPreviewImage" data-src="{{item}}" />
+          <view class="img-del" catchtap="onRemoveImage" data-index="{{index}}">×</view>
+        </view>
+        <view class="img-add" wx:if="{{images.length < 3}}" bindtap="onChooseImage">＋</view>
+      </view>
+      <view class="form-tip">最多 3 张，拍手机外观/成色</view>
+    </view>
+
+    <view class="section-divider">回收人信息（选填）</view>
+    <view class="form-group">
+      <view class="form-label">回收人姓名</view>
+      <input class="form-input" placeholder="谁卖给你的" value="{{sellerName}}" bindinput="onSellerName" />
+    </view>
+    <view class="form-group">
+      <view class="form-label">证件号码</view>
+      <input class="form-input" placeholder="身份证号等" value="{{sellerId}}" bindinput="onSellerId" />
+    </view>
+    <view class="form-group">
+      <view class="form-label">联系方式</view>
+      <input class="form-input" type="number" placeholder="手机号" value="{{sellerPhone}}" bindinput="onSellerPhone" />
+    </view>
+
+    <view class="form-group">
+      <view class="form-label">备注</view>
+      <input class="form-input" placeholder="其他说明" value="{{remark}}" bindinput="onRemark" />
+    </view>
+  </view>
+
+  <button class="btn-primary" bindtap="onSubmit" loading="{{submitting}}">确认收机入库</button>
+</view>

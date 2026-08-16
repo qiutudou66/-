@@ -1,0 +1,60 @@
+<!-- pages/stock/list/list.wxml - 库存列表 -->
+<view class="container">
+  <!-- 状态 tab -->
+  <view class="status-tabs">
+    <view
+      wx:for="{{statusTabs}}"
+      wx:key="key"
+      class="status-tab {{activeStatus === item.key ? 'active' : ''}}"
+      data-key="{{item.key}}"
+      bindtap="onStatusTap"
+    >{{item.text}}</view>
+  </view>
+
+  <!-- 搜索 -->
+  <view class="search-bar">
+    <input placeholder="搜索 IMEI / 型号 / 品牌" value="{{keyword}}" bindinput="onSearch" confirm-type="search" bindconfirm="doSearch" />
+  </view>
+
+  <!-- 筛选 -->
+  <view class="filter-bar">
+    <picker range="{{brands}}" value="{{brandIndex}}" bindchange="onBrandChange">
+      <view class="filter-item {{brandIndex > 0 ? 'active' : ''}}">{{brands[brandIndex]}} ▾</view>
+    </picker>
+    <picker range="{{memories}}" value="{{memoryIndex}}" bindchange="onMemoryChange">
+      <view class="filter-item {{memoryIndex > 0 ? 'active' : ''}}">{{memories[memoryIndex]}} ▾</view>
+    </picker>
+    <picker range="{{grades}}" value="{{gradeIndex}}" bindchange="onGradeChange">
+      <view class="filter-item {{gradeIndex > 0 ? 'active' : ''}}">{{grades[gradeIndex]}} ▾</view>
+    </picker>
+  </view>
+
+  <view class="stock-count">共 {{total}} 台</view>
+
+  <block wx:if="{{list.length > 0}}">
+    <view class="card" wx:for="{{list}}" wx:key="_id" bindtap="goDetail" data-id="{{item._id}}">
+      <view class="prod-header">
+        <text class="prod-name">{{item.brand}} {{item.model}}</text>
+        <text class="tag {{item.statusClass}}">{{item.statusText}}</text>
+      </view>
+      <view class="prod-info">
+        <text>{{item.memory}}</text>
+        <text>{{item.color || '-'}}</text>
+        <text>{{item.gradeText}}</text>
+      </view>
+      <view class="prod-info">
+        <text class="imei">IMEI: {{item.imei}}</text>
+      </view>
+      <view class="prod-footer">
+        <view>
+          <text>成本 ¥{{item.cost_price}}</text>
+          <text class="price-small" wx:if="{{item.expectText}}">标价 ¥{{item.expectText}}</text>
+        </view>
+        <button wx:if="{{item.status === 1}}" class="row-btn" catchtap="onReturn" data-id="{{item._id}}">退货</button>
+      </view>
+    </view>
+  </block>
+  <view class="empty" wx:else>暂无手机</view>
+
+  <view class="fab" bindtap="goRecycle">＋</view>
+</view>
