@@ -27,6 +27,11 @@
   box-sizing: border-box;
 }
 
+.half .form-input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
 button {
   margin-top: 20rpx;
 }
