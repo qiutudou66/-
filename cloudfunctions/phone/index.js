@@ -227,6 +227,7 @@ async function sell(event) {
     })
     await transaction.collection('flows').add({
       data: {
+        store_id: _store_id,
         phone_id: id,
         type: 2,
         amount: price,
@@ -273,6 +274,7 @@ async function customerReturn(event) {
     const suffix = returnerName ? `（退货人：${returnerName}${returnerPhone ? ' ' + returnerPhone : ''}）` : ''
     await transaction.collection('flows').add({
       data: {
+        store_id: _store_id,
         phone_id: id,
         type: 3,
         amount: -refund,
@@ -311,6 +313,7 @@ async function returnSupplier(event) {
     })
     await transaction.collection('flows').add({
       data: {
+        store_id: _store_id,
         phone_id: id,
         type: 4,
         amount: cost,
