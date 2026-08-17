@@ -69,9 +69,9 @@
           <image class="img-thumb" src="{{item}}" mode="aspectFill" bindtap="onPreviewImage" data-src="{{item}}" />
           <view class="img-del" catchtap="onRemoveImage" data-index="{{index}}">×</view>
         </view>
-        <view class="img-add" wx:if="{{images.length < 3}}" bindtap="onChooseImage">＋</view>
+        <view class="img-add" wx:if="{{images.length < 5}}" bindtap="onChooseImage">＋</view>
       </view>
-      <view class="form-tip">最多 3 张，可重新上传/删除</view>
+      <view class="form-tip">最多 5 张，可重新上传/删除</view>
     </view>
 
     <view class="section-divider">回收人信息（选填）</view>

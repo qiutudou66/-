@@ -145,9 +145,9 @@ Page({
   onRemark(e) { this.setData({ remark: e.detail.value }) },
 
   onChooseImage() {
-    const remain = 3 - this.data.images.length
+    const remain = 5 - this.data.images.length
     if (remain <= 0) {
-      wx.showToast({ title: '最多上传 3 张', icon: 'none' })
+      wx.showToast({ title: '最多上传 5 张', icon: 'none' })
       return
     }
     if (this.data.uploading) return
