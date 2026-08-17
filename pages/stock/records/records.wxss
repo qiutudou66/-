@@ -1,8 +1,0 @@
-/* pages/stock/records/records.wxss */
-.prod-title { font-size: 32rpx; font-weight: 600; }
-.rec-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8rpx; }
-.rec-no { font-size: 26rpx; font-weight: 500; }
-.rec-info { display: flex; justify-content: space-between; font-size: 24rpx; margin: 8rpx 0; }
-.rec-footer { display: flex; justify-content: space-between; font-size: 22rpx; color: #bbb; margin-top: 4rpx; }
-.rec-date { color: #ccc; }
-.rec-remark { color: #999; max-width: 400rpx; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
