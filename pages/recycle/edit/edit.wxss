@@ -37,6 +37,8 @@ button {
   width: 100%;
   box-sizing: border-box;
   height: 140rpx;
+  padding: 22rpx;
+  line-height: 1.6;
 }
 
 .form-tip {
