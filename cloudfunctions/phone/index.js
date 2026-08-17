@@ -4,7 +4,7 @@ cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 const db = cloud.database()
 const _ = db.command
 
-// 状态：0在库 1已售 2销售退货(可再售) 3退给上家
+// 状态：0在库 1已售 2退货(可再售)
 const SALEABLE = [0, 2]
 
 // 集合不存在时自动创建，避免首次使用报错
@@ -25,7 +25,6 @@ exports.main = async (event) => {
     case 'remove': return await remove(event)
     case 'sell': return await sell(event)
     case 'customerReturn': return await customerReturn(event)
-    case 'returnSupplier': return await returnSupplier(event)
     default: return { code: 1, message: '未知操作' }
   }
 }
@@ -243,9 +242,9 @@ async function sell(event) {
   return { code: 0, data: result }
 }
 
-// 销售退货：已售机退回，状态回可售(自动补库存)，记退货人/金额/日期，冲减营收
+// 退货入库：已售机客户退回，状态回可售(自动补库存)，可填退款金额 + 再卖价格，记退货人/日期，冲减营收
 async function customerReturn(event) {
-  const { id, refundPrice, date, returnerName, returnerPhone, remark, _store_id } = event
+  const { id, refundPrice, date, returnerName, returnerPhone, remark, resellPrice, _store_id } = event
   if (!_store_id) return { code: 1, message: '未登录' }
   if (!id) return { code: 1, message: '参数缺失' }
   const bizDate = date || todayStr()
@@ -257,10 +256,11 @@ async function customerReturn(event) {
       return { ok: false, message: '无权操作' }
     }
     if (phone.status !== 1) {
-      return { ok: false, message: '仅已售手机可退货' }
+      return { ok: false, message: '仅已售手机可退货入库' }
     }
     // 未填退货金额则默认退全额成交价
     const refund = Number(refundPrice) || Number(phone.sell_price || 0)
+    const resell = Number(resellPrice)
     await transaction.collection('phones').doc(id).update({
       data: {
         status: 2,
@@ -268,6 +268,7 @@ async function customerReturn(event) {
         return_person: returnerName || '',
         return_phone: returnerPhone || '',
         refund_price: refund,
+        expect_price: resell > 0 ? resell : phone.expect_price,
         updated_at: db.serverDate()
       }
     })
@@ -284,45 +285,6 @@ async function customerReturn(event) {
       }
     })
     return { ok: true, refund }
-  })
-
-  if (!result.ok) return { code: 1, message: result.message }
-  return { code: 0, data: result }
-}
-
-// 退给上家：在库机退还给收来的卖家，冲销成本（仅老板可操作）
-async function returnSupplier(event) {
-  const { id, date, remark, _store_id, _role } = event
-  if (!_store_id) return { code: 1, message: '未登录' }
-  if (_role !== 'boss') return { code: 1, message: '仅老板可退给上家' }
-  if (!id) return { code: 1, message: '参数缺失' }
-  const bizDate = date || todayStr()
-
-  const result = await db.runTransaction(async transaction => {
-    const phoneRes = await transaction.collection('phones').doc(id).get()
-    const phone = phoneRes.data
-    if (!phone || phone.store_id !== _store_id) {
-      return { ok: false, message: '无权操作' }
-    }
-    if (phone.status !== 0) {
-      return { ok: false, message: '仅在库手机可退货入库' }
-    }
-    const cost = Number(phone.cost_price || 0)
-    await transaction.collection('phones').doc(id).update({
-      data: { status: 3, updated_at: db.serverDate() }
-    })
-    await transaction.collection('flows').add({
-      data: {
-        store_id: _store_id,
-        phone_id: id,
-        type: 4,
-        amount: cost,
-        date: bizDate,
-        remark: remark || '',
-        created_at: db.serverDate()
-      }
-    })
-    return { ok: true, cost }
   })
 
   if (!result.ok) return { code: 1, message: result.message }
