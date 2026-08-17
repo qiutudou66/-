@@ -2,17 +2,11 @@
 <view class="container">
   <view class="form-tip imei-tip">IMEI 是唯一标识，不可修改</view>
   <view class="card">
-    <view class="form-row">
-      <view class="form-group half">
-        <view class="form-label">品牌 *</view>
-        <picker range="{{brands}}" value="{{brandIndex}}" bindchange="onBrand">
-          <view class="form-input picker">{{brands[brandIndex]}} ▾</view>
-        </picker>
-      </view>
-      <view class="form-group half">
-        <view class="form-label">颜色</view>
-        <input class="form-input" placeholder="如 黑色" value="{{color}}" bindinput="onColor" />
-      </view>
+    <view class="form-group">
+      <view class="form-label">品牌 *</view>
+      <picker range="{{brands}}" value="{{brandIndex}}" bindchange="onBrand">
+        <view class="form-input picker">{{brands[brandIndex]}} ▾</view>
+      </picker>
     </view>
 
     <view class="form-group">
@@ -20,41 +14,43 @@
       <input class="form-input" placeholder="如 iPhone 13" value="{{model}}" bindinput="onModel" />
     </view>
 
-    <view class="form-row">
-      <view class="form-group half">
-        <view class="form-label">容量 *</view>
-        <input class="form-input" placeholder="如 256G" value="{{memory}}" bindinput="onMemory" />
-      </view>
-      <view class="form-group half">
-        <view class="form-label">成色</view>
-        <picker range="{{grades}}" value="{{gradeIndex}}" bindchange="onGrade">
-          <view class="form-input picker">{{grades[gradeIndex]}} ▾</view>
-        </picker>
-      </view>
+    <view class="form-group">
+      <view class="form-label">容量 *</view>
+      <input class="form-input" placeholder="如 256G" value="{{memory}}" bindinput="onMemory" />
     </view>
 
-    <view class="form-row">
-      <view class="form-group half">
-        <view class="form-label">回收日期</view>
-        <picker mode="date" value="{{recycleDate}}" bindchange="onDate">
-          <view class="form-input picker">{{recycleDate}}</view>
-        </picker>
-      </view>
-      <view class="form-group half">
-        <view class="form-label">电池寿命</view>
-        <input class="form-input" placeholder="如 90%" value="{{battery}}" bindinput="onBattery" />
-      </view>
+    <view class="form-group">
+      <view class="form-label">颜色</view>
+      <input class="form-input" placeholder="如 黑色" value="{{color}}" bindinput="onColor" />
     </view>
 
-    <view class="form-row">
-      <view class="form-group half">
-        <view class="form-label">成本价(收价) *</view>
-        <input class="form-input" type="digit" placeholder="0.00" value="{{costPrice}}" bindinput="onCost" />
-      </view>
-      <view class="form-group half">
-        <view class="form-label">期望售价</view>
-        <input class="form-input" type="digit" placeholder="可后填" value="{{expectPrice}}" bindinput="onExpect" />
-      </view>
+    <view class="form-group">
+      <view class="form-label">成色</view>
+      <picker range="{{grades}}" value="{{gradeIndex}}" bindchange="onGrade">
+        <view class="form-input picker">{{grades[gradeIndex]}} ▾</view>
+      </picker>
+    </view>
+
+    <view class="form-group">
+      <view class="form-label">回收日期</view>
+      <picker mode="date" value="{{recycleDate}}" bindchange="onDate">
+        <view class="form-input picker">{{recycleDate}}</view>
+      </picker>
+    </view>
+
+    <view class="form-group">
+      <view class="form-label">电池寿命</view>
+      <input class="form-input" placeholder="如 90%" value="{{battery}}" bindinput="onBattery" />
+    </view>
+
+    <view class="form-group">
+      <view class="form-label">成本价(收价) *</view>
+      <input class="form-input" type="digit" placeholder="0.00" value="{{costPrice}}" bindinput="onCost" />
+    </view>
+
+    <view class="form-group">
+      <view class="form-label">期望售价</view>
+      <input class="form-input" type="digit" placeholder="可后填" value="{{expectPrice}}" bindinput="onExpect" />
     </view>
 
     <view class="form-group">

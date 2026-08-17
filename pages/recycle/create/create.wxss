@@ -23,10 +23,6 @@
 }
 
 .form-input {
-  width: auto;
-}
-
-.half .form-input {
   width: 100%;
   box-sizing: border-box;
 }

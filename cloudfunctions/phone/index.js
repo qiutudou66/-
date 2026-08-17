@@ -305,7 +305,7 @@ async function returnSupplier(event) {
       return { ok: false, message: '无权操作' }
     }
     if (phone.status !== 0) {
-      return { ok: false, message: '仅在库手机可退给上家' }
+      return { ok: false, message: '仅在库手机可退货入库' }
     }
     const cost = Number(phone.cost_price || 0)
     await transaction.collection('phones').doc(id).update({
