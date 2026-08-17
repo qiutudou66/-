@@ -1,0 +1,100 @@
+/* pages/recycle/edit/edit.wxss - 编辑入库 */
+.imei-tip {
+  text-align: center;
+  margin-bottom: 12rpx;
+}
+
+.form-row {
+  display: flex;
+  gap: 20rpx;
+}
+
+.form-group.half {
+  flex: 1;
+}
+
+.picker {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.form-input {
+  width: auto;
+}
+
+.half .form-input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+button {
+  margin-top: 20rpx;
+}
+
+.form-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  height: 140rpx;
+}
+
+.form-tip {
+  font-size: 22rpx;
+  color: #999;
+  margin-top: 8rpx;
+}
+
+.img-list {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.img-item {
+  position: relative;
+  width: 160rpx;
+  height: 160rpx;
+  margin-right: 16rpx;
+  margin-bottom: 16rpx;
+}
+
+.img-thumb {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 8rpx;
+  background: #f0f0f0;
+}
+
+.img-del {
+  position: absolute;
+  top: -12rpx;
+  right: -12rpx;
+  width: 40rpx;
+  height: 40rpx;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 36rpx;
+  font-size: 30rpx;
+}
+
+.img-add {
+  width: 160rpx;
+  height: 160rpx;
+  border: 2rpx dashed #ccc;
+  border-radius: 8rpx;
+  color: #999;
+  font-size: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fafafa;
+}
+
+.section-divider {
+  font-size: 24rpx;
+  color: #999;
+  padding: 12rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+  margin-bottom: 20rpx;
+}

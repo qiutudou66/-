@@ -11,6 +11,13 @@ Page({
     loading: false
   },
 
+  onLoad() {
+    // 同一部手机登录过就免登录，直接进首页（退出时会清掉本地登录态）
+    if (wx.getStorageSync('userInfo')) {
+      wx.switchTab({ url: '/pages/index/index' })
+    }
+  },
+
   onUsernameInput(e) {
     this.setData({ username: e.detail.value })
   },

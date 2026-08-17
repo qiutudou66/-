@@ -4,6 +4,7 @@
     "pages/index/index",
     "pages/stock/list/list",
     "pages/recycle/create/create",
+    "pages/recycle/edit/edit",
     "pages/detail/detail",
     "pages/sell/sell",
     "pages/return/return",

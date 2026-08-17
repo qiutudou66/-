@@ -22,6 +22,7 @@ exports.main = async (event) => {
     case 'get': return await get(event)
     case 'create': return await create(event)
     case 'update': return await update(event)
+    case 'remove': return await remove(event)
     case 'sell': return await sell(event)
     case 'customerReturn': return await customerReturn(event)
     case 'returnSupplier': return await returnSupplier(event)
@@ -133,21 +134,30 @@ async function create(event) {
   return { code: 0, data: { id: addRes._id } }
 }
 
-// 改在库机属性（IMEI 不可改）
+// 改机属性（仅限在库/退货可编辑，IMEI 不可改；成本价变了同步收机流水金额，保证利润对得上）
 async function update(event) {
   const { id, data, _store_id } = event
   if (!_store_id) return { code: 1, message: '未登录' }
-  const res = await db.collection('phones')
-    .where({ _id: id, status: 0, store_id: _store_id })
-    .update({
+  if (!id || !data) return { code: 1, message: '参数缺失' }
+
+  const result = await db.runTransaction(async transaction => {
+    const phoneRes = await transaction.collection('phones').doc(id).get()
+    const phone = phoneRes.data
+    if (!phone || phone.store_id !== _store_id) return { ok: false, message: '无权操作' }
+    if (!SALEABLE.includes(phone.status)) return { ok: false, message: '仅在库/退货机可编辑' }
+
+    const costPrice = Number(data.cost_price) || 0
+    await transaction.collection('phones').doc(id).update({
       data: {
         brand: data.brand,
         model: data.model,
         memory: data.memory,
+        battery: data.battery || '',
         color: data.color || '',
         grade: Number(data.grade) || 1,
-        cost_price: Number(data.cost_price) || 0,
+        cost_price: costPrice,
         expect_price: data.expect_price ? Number(data.expect_price) : null,
+        recycle_date: data.recycle_date || phone.recycle_date,
         detail: data.detail || '',
         images: Array.isArray(data.images) ? data.images : [],
         seller_name: data.seller_name || '',
@@ -157,8 +167,37 @@ async function update(event) {
         updated_at: db.serverDate()
       }
     })
-  if (res.stats.updated === 0) return { code: 1, message: '仅可修改在库手机' }
+    if (costPrice !== Number(phone.cost_price)) {
+      await transaction.collection('flows').where({ phone_id: id, type: 1 }).update({
+        data: { amount: -costPrice }
+      })
+    }
+    return { ok: true }
+  })
+
+  if (!result.ok) return { code: 1, message: result.message }
   return { code: 0, data: { message: '已保存' } }
+}
+
+// 删除入库（仅老板 + 仅在库）：删手机 + 删该机收机流水，流水净额不变
+async function remove(event) {
+  const { id, _store_id, _role } = event
+  if (!_store_id) return { code: 1, message: '未登录' }
+  if (_role !== 'boss') return { code: 1, message: '仅老板可删除' }
+  if (!id) return { code: 1, message: '参数缺失' }
+
+  const result = await db.runTransaction(async transaction => {
+    const phoneRes = await transaction.collection('phones').doc(id).get()
+    const phone = phoneRes.data
+    if (!phone || phone.store_id !== _store_id) return { ok: false, message: '无权操作' }
+    if (phone.status !== 0) return { ok: false, message: '仅在库手机可删除' }
+    await transaction.collection('phones').doc(id).remove()
+    await transaction.collection('flows').where({ phone_id: id }).remove()
+    return { ok: true }
+  })
+
+  if (!result.ok) return { code: 1, message: result.message }
+  return { code: 0, data: { message: '已删除' } }
 }
 
 // 卖机：事务内改状态 + 记收入流水

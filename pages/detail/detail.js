@@ -64,6 +64,25 @@ Page({
   goSell() {
     wx.navigateTo({ url: '/pages/sell/sell?id=' + this.data.id })
   },
+  goEdit() {
+    wx.navigateTo({ url: '/pages/recycle/edit/edit?id=' + this.data.id })
+  },
+  onDelete() {
+    const p = this.data.phone
+    wx.showModal({
+      title: '删除入库',
+      content: `确认删除「${p.brand} ${p.model}」这条入库记录？将同时删除它的收机流水，不可恢复。`,
+      confirmColor: '#ff4d4f',
+      success: async res => {
+        if (!res.confirm) return
+        try {
+          await call('phone', { action: 'remove', id: this.data.id })
+          wx.showToast({ title: '已删除', icon: 'success' })
+          setTimeout(() => wx.navigateBack(), 600)
+        } catch (err) { console.error(err) }
+      }
+    })
+  },
   onReturn() {
     wx.navigateTo({ url: '/pages/return/return?id=' + this.data.id })
   },
