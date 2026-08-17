@@ -7,10 +7,9 @@ const STATUS = [
   { key: -1, text: '全部' },
   { key: 0, text: '在库' },
   { key: 1, text: '已售' },
-  { key: 2, text: '退货' },
-  { key: 3, text: '退货入库' }
+  { key: 2, text: '退货入库' }
 ]
-const STATUS_MAP = { 0: { text: '在库', cls: 'tag-green' }, 1: { text: '已售', cls: 'tag-blue' }, 2: { text: '退货', cls: 'tag-orange' }, 3: { text: '退货入库', cls: 'tag-gray' } }
+const STATUS_MAP = { 0: { text: '在库', cls: 'tag-green' }, 1: { text: '已售', cls: 'tag-blue' }, 2: { text: '退货入库', cls: 'tag-orange' } }
 const BRANDS = ['全部', '苹果', '华为', '小米', 'OPPO', 'vivo', '荣耀', '三星', '一加', '其他']
 const MEMORIES = ['全部', '64G', '128G', '256G', '512G', '1T']
 const GRADES = ['全部', '99新', '95新', '9成新', '8成新及以下', '有划痕', '其他']

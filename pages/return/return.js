@@ -1,4 +1,4 @@
-// pages/return/return.js - 销售退货登记
+// pages/return/return.js - 退货入库登记
 const { call } = require('../../utils/cloud')
 const { checkLogin } = require('../../utils/auth')
 const { formatMoney, todayStr } = require('../../utils/format')
@@ -9,6 +9,7 @@ Page({
     phone: null,
     sellText: '0.00',
     refundPrice: '',
+    resellPrice: '',
     date: '',
     returnerName: '',
     returnerPhone: '',
@@ -30,7 +31,8 @@ Page({
       this.setData({
         phone,
         sellText: formatMoney(phone.sell_price),
-        refundPrice: phone.sell_price != null ? String(phone.sell_price) : ''
+        refundPrice: phone.sell_price != null ? String(phone.sell_price) : '',
+        resellPrice: phone.expect_price != null ? String(phone.expect_price) : ''
       })
     } catch (err) {
       console.error(err)
@@ -43,6 +45,9 @@ Page({
   onRefund(e) {
     this.setData({ refundPrice: e.detail.value })
   },
+  onResell(e) {
+    this.setData({ resellPrice: e.detail.value })
+  },
   onName(e) {
     this.setData({ returnerName: e.detail.value })
   },
@@ -54,7 +59,7 @@ Page({
   },
 
   async onSubmit() {
-    const { id, refundPrice, date, returnerName, returnerPhone, remark, submitting } = this.data
+    const { id, refundPrice, resellPrice, date, returnerName, returnerPhone, remark, submitting } = this.data
     const refund = Number(refundPrice)
     if (refund == null || isNaN(refund) || refund < 0) {
       wx.showToast({ title: '请输入正确的退货金额', icon: 'none' })
@@ -72,6 +77,7 @@ Page({
         action: 'customerReturn',
         id,
         refundPrice: refund,
+        resellPrice: Number(resellPrice) || '',
         date,
         returnerName: returnerName.trim(),
         returnerPhone: returnerPhone.trim(),

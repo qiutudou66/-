@@ -4,7 +4,7 @@
 
 ## 业务范围
 只管理**二手手机**，每台手机是唯一库存（IMEI 唯一）。不管理配件。
-流程：收机（录入+记支出）→ 卖机（卖出+记收入+算利润）→ 退货（销售退回 / 退给上家）。
+流程：收机（录入+记支出）→ 卖机（卖出+记收入+算利润）→ 退货入库（客户退货，可再卖）。
 
 ## 目录约定
 - `cloudfunctions/` 云函数，每业务域一个文件夹，内部 `action` 分发（list/get/create/update/sell...）
@@ -17,12 +17,12 @@
 - `phones`：手机，一机一条
   - 字段：`imei, brand, model, memory, color, grade, cost_price, expect_price, sell_price, status, recycle_date, sell_date, detail, images[], seller_name, seller_id, seller_phone, remark, created_at, updated_at`
   - `images`：回收图片 fileID 数组（云存储）；`seller_*`：回收人姓名/证件/电话，选填
-  - `status`：0=在库 1=已售 2=销售退货(可再售) 3=退给上家
+  - `status`：0=在库 1=已售 2=退货入库(可再售)
   - `grade`：1=99新 2=95新 3=9成新 4=8成新及以下 5=有划痕 6=其他
   - IMEI 唯一：create 时先查重（云库无物理唯一约束）
 - `flows`：资金流水
   - 字段：`phone_id, type, amount, date, remark, created_at`
-  - `type`：1=收机(负) 2=卖机(正) 3=销售退货(负) 4=退上家(正)
+  - `type`：1=收机(负) 2=卖机(正) 3=退货入库(负)
   - `amount`：收入为正、支出为负。**利润 = SUM(amount)**
 
 ## 约定

@@ -3,13 +3,12 @@ const { call } = require('../../../utils/cloud')
 const { checkLogin } = require('../../../utils/auth')
 const { formatMoney } = require('../../../utils/format')
 
-const TYPE_TEXT = { 1: '收机', 2: '卖机', 3: '退货', 4: '退货入库' }
+const TYPE_TEXT = { 1: '收机', 2: '卖机', 3: '退货入库' }
 const TYPES = [
   { key: 0, text: '全部' },
   { key: 1, text: '收机' },
   { key: 2, text: '卖机' },
-  { key: 3, text: '退货' },
-  { key: 4, text: '退货入库' }
+  { key: 3, text: '退货入库' }
 ]
 
 Page({

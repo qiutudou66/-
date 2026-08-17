@@ -18,12 +18,8 @@
       <view class="summary-value">{{counts.sold}}</view>
     </view>
     <view class="summary-item" bindtap="goStock">
-      <view class="summary-label">退货</view>
+      <view class="summary-label">退货入库</view>
       <view class="summary-value">{{counts.returned}}</view>
-    </view>
-    <view class="summary-item" bindtap="goStock">
-      <view class="summary-label">退上家</view>
-      <view class="summary-value">{{counts.supplier}}</view>
     </view>
   </view>
 

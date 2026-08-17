@@ -1,4 +1,4 @@
-/* pages/return/return.wxss - 销售退货 */
+/* pages/return/return.wxss - 退货入库 */
 .detail-name {
   font-size: 34rpx;
   font-weight: 600;

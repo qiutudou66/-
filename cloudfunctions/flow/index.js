@@ -102,11 +102,10 @@ async function dashboard(event) {
     return { income: round2(income), expense: round2(expense), profit: round2(income - expense) }
   }
 
-  const [inStock, sold, returned, supplier, todaySum, monthSum] = await Promise.all([
+  const [inStock, sold, returned, todaySum, monthSum] = await Promise.all([
     countByStatus(0),
     countByStatus(1),
     countByStatus(2),
-    countByStatus(3),
     sumRange(today, today),
     sumRange(monthStart, today)
   ])
@@ -122,7 +121,7 @@ async function dashboard(event) {
   return {
     code: 0,
     data: {
-      counts: { in_stock: inStock, sold, returned, supplier },
+      counts: { in_stock: inStock, sold, returned },
       today: todaySum,
       month: monthSum,
       recentFlows
@@ -130,14 +129,13 @@ async function dashboard(event) {
   }
 }
 
-// 按流水类型归类收支：1收机=支出 2卖机=收入 3退货=冲减收入 4退上家=冲减支出
+// 按流水类型归类收支：1收机=支出 2卖机=收入 3退货=冲减收入
 function classify(f) {
   const amount = Number(f.amount) || 0
   const type = Number(f.type)
   if (type === 2) return { income: amount, expense: 0 }
   if (type === 3) return { income: amount, expense: 0 } // 负值，冲减收入
   if (type === 1) return { income: 0, expense: -amount }
-  if (type === 4) return { income: 0, expense: -amount } // 负值，冲减支出
   return amount >= 0 ? { income: amount, expense: 0 } : { income: 0, expense: -amount }
 }
 

@@ -1,4 +1,4 @@
-<!-- pages/return/return.wxml - 销售退货 -->
+<!-- pages/return/return.wxml - 退货入库 -->
 <view class="container" wx:if="{{phone}}">
 
   <view class="card">
@@ -14,6 +14,10 @@
     <view class="form-group">
       <view class="form-label">退货金额 *</view>
       <input class="form-input" type="digit" placeholder="默认退全额成交价" value="{{refundPrice}}" bindinput="onRefund" />
+    </view>
+    <view class="form-group">
+      <view class="form-label">再卖价格</view>
+      <input class="form-input" type="digit" placeholder="不填则保留原期望售价" value="{{resellPrice}}" bindinput="onResell" />
     </view>
     <view class="form-group">
       <view class="form-label">退货日期 *</view>
@@ -33,7 +37,7 @@
       <view class="form-label">备注</view>
       <input class="form-input" placeholder="退货原因等说明" value="{{remark}}" bindinput="onRemark" />
     </view>
-    <button class="btn-primary" bindtap="onSubmit" loading="{{submitting}}">确认退货</button>
+    <button class="btn-primary" bindtap="onSubmit" loading="{{submitting}}">确认退货入库</button>
   </view>
 
   <view class="card result-card" wx:else>

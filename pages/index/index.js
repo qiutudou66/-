@@ -3,13 +3,13 @@ const { call } = require('../../utils/cloud')
 const { checkLogin, getUserInfo } = require('../../utils/auth')
 const { formatMoney } = require('../../utils/format')
 
-const TYPE_TEXT = { 1: '收机', 2: '卖机', 3: '退货', 4: '退上家' }
+const TYPE_TEXT = { 1: '收机', 2: '卖机', 3: '退货入库' }
 
 Page({
   data: {
     storeName: '来财',
     dateText: '',
-    counts: { in_stock: 0, sold: 0, returned: 0, supplier: 0 },
+    counts: { in_stock: 0, sold: 0, returned: 0 },
     today: { income: '0.00', expense: '0.00', profit: '0.00' },
     month: { income: '0.00', expense: '0.00', profit: '0.00' },
     recentFlows: []
