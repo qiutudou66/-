@@ -2,6 +2,7 @@
 const { call } = require('../../../utils/cloud')
 const { checkLogin } = require('../../../utils/auth')
 const { todayStr } = require('../../../utils/format')
+const { compressImage } = require('../../../utils/image')
 
 const BRANDS = ['苹果', '华为', '小米', 'OPPO', 'vivo', '荣耀', '三星', '一加', '其他']
 const GRADES = ['99新', '95新', '9成新', '8成新及以下', '有划痕', '其他']
@@ -33,6 +34,8 @@ Page({
   onLoad(options) {
     if (!checkLogin()) return
     this.setData({ id: options.id })
+    this.originalImages = []
+    this.newImages = []
     this.load()
   },
 
@@ -57,6 +60,8 @@ Page({
         sellerPhone: p.seller_phone || '',
         remark: p.remark || ''
       })
+      this.originalImages = p.images || []
+      this.newImages = []
     } catch (err) {
       console.error(err)
     }
@@ -91,11 +96,13 @@ Page({
         this.setData({ uploading: true })
         wx.showLoading({ title: '上传中...' })
         try {
-          const tasks = res.tempFiles.map((f, i) => wx.cloud.uploadFile({
+          const paths = await Promise.all(res.tempFiles.map(f => compressImage(f.tempFilePath)))
+          const tasks = paths.map((filePath, i) => wx.cloud.uploadFile({
             cloudPath: `recycle/${Date.now()}-${i}-${Math.random().toString(36).slice(2, 8)}.jpg`,
-            filePath: f.tempFilePath
+            filePath
           }))
           const results = await Promise.all(tasks)
+          this.newImages = this.newImages.concat(results.map(r => r.fileID))
           this.setData({ images: this.data.images.concat(results.map(r => r.fileID)) })
         } catch (err) {
           console.error(err)
@@ -115,8 +122,13 @@ Page({
 
   onRemoveImage(e) {
     const images = this.data.images.slice()
-    images.splice(e.currentTarget.dataset.index, 1)
+    const removed = images.splice(e.currentTarget.dataset.index, 1)
     this.setData({ images })
+    const fileID = removed[0]
+    if (fileID && this.newImages.indexOf(fileID) >= 0) {
+      // 本次新传的图，拍错删云存储；旧图等保存成功后再删
+      wx.cloud.deleteFile({ fileList: [fileID] }).catch(() => {})
+    }
   },
 
   async onSubmit() {
@@ -154,6 +166,11 @@ Page({
           remark: d.remark.trim()
         }
       })
+      // 保存成功后再删被移除的旧图，避免中途放弃时记录引用已删文件
+      const removedOld = this.originalImages.filter(id => this.data.images.indexOf(id) < 0)
+      if (removedOld.length) {
+        wx.cloud.deleteFile({ fileList: removedOld }).catch(() => {})
+      }
       wx.showToast({ title: '已保存', icon: 'success' })
       setTimeout(() => wx.navigateBack(), 600)
     } catch (err) {

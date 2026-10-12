@@ -2,48 +2,10 @@
 const { call } = require('../../../utils/cloud')
 const { checkLogin } = require('../../../utils/auth')
 const { todayStr } = require('../../../utils/format')
+const { compressImage } = require('../../../utils/image')
 
 const BRANDS = ['苹果', '华为', '小米', 'OPPO', 'vivo', '荣耀', '三星', '一加', '其他']
 const GRADES = ['99新', '95新', '9成新', '8成新及以下', '有划痕', '其他']
-
-// 压缩图片到最长边 1600px，避免超出百度 OCR 4MB 限制
-function compressImage(src, maxSide = 1600) {
-  return new Promise(resolve => {
-    wx.getImageInfo({
-      src,
-      success: info => {
-        let { width, height } = info
-        if (width <= maxSide && height <= maxSide) {
-          resolve(src)
-          return
-        }
-        const ratio = Math.min(maxSide / width, maxSide / height)
-        width = Math.round(width * ratio)
-        height = Math.round(height * ratio)
-        try {
-          const canvas = wx.createOffscreenCanvas({ type: '2d', width, height })
-          const ctx = canvas.getContext('2d')
-          const img = canvas.createImage()
-          img.onload = () => {
-            ctx.drawImage(img, 0, 0, width, height)
-            wx.canvasToTempFilePath({
-              canvas,
-              fileType: 'jpg',
-              quality: 0.7,
-              success: r => resolve(r.tempFilePath),
-              fail: () => resolve(src)
-            })
-          }
-          img.onerror = () => resolve(src)
-          img.src = src
-        } catch (e) {
-          resolve(src) // 压缩失败就用原图，百度那边会提示
-        }
-      },
-      fail: () => resolve(src)
-    })
-  })
-}
 
 Page({
   data: {
@@ -81,6 +43,7 @@ Page({
         console.log('onOcr: 已选照片', path)
         this.setData({ recognizing: true })
         let msg = ''
+        let fileID = ''
         try {
           const compressed = await compressImage(path)
           console.log('onOcr: 压缩完成', compressed)
@@ -89,9 +52,10 @@ Page({
             cloudPath: `ocr/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.jpg`,
             filePath: compressed
           })
-          console.log('onOcr: 上传完成', up.fileID)
+          fileID = up.fileID
+          console.log('onOcr: 上传完成', fileID)
           wx.showLoading({ title: '识别文字...' })
-          const data = await call('ocr', { action: 'recognize', fileID: up.fileID })
+          const data = await call('ocr', { action: 'recognize', fileID })
           console.log('onOcr: 识别返回', JSON.stringify(data))
           const patch = {}
           if (data.imei) patch.imei = data.imei
@@ -112,6 +76,8 @@ Page({
           msg = (err && err.message) || '识别失败，请重试'
         } finally {
           wx.hideLoading()
+          // 识别用的临时图用完即删，不留云存储垃圾
+          if (fileID) wx.cloud.deleteFile({ fileList: [fileID] }).catch(() => {})
           this.setData({ recognizing: false })
         }
         if (msg) wx.showToast({ title: msg, icon: 'none' })
@@ -158,9 +124,10 @@ Page({
         this.setData({ uploading: true })
         wx.showLoading({ title: '上传中...' })
         try {
-          const tasks = res.tempFiles.map((f, i) => wx.cloud.uploadFile({
+          const paths = await Promise.all(res.tempFiles.map(f => compressImage(f.tempFilePath)))
+          const tasks = paths.map((filePath, i) => wx.cloud.uploadFile({
             cloudPath: `recycle/${Date.now()}-${i}-${Math.random().toString(36).slice(2, 8)}.jpg`,
-            filePath: f.tempFilePath
+            filePath
           }))
           const results = await Promise.all(tasks)
           const fileIDs = results.map(r => r.fileID)
@@ -184,8 +151,12 @@ Page({
   onRemoveImage(e) {
     const index = e.currentTarget.dataset.index
     const images = this.data.images.slice()
-    images.splice(index, 1)
+    const removed = images.splice(index, 1)
     this.setData({ images })
+    if (removed[0]) {
+      // 拍错不要的图，连带删云存储，省存储额度
+      wx.cloud.deleteFile({ fileList: [removed[0]] }).catch(() => {})
+    }
   },
 
   async onSubmit() {

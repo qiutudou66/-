@@ -16,6 +16,7 @@ exports.main = async (event, context) => {
     case 'addEmployee': return await addEmployee(event)
     case 'listEmployees': return await listEmployees(event)
     case 'removeEmployee': return await removeEmployee(event)
+    case 'setStorePhoto': return await setStorePhoto(event)
     case 'init': return await initDB(event)
     default: return { code: 1, message: '未知操作' }
   }
@@ -203,6 +204,23 @@ async function removeEmployee(event) {
   }
   await db.collection('users').doc(id).remove()
   return { code: 0, data: { message: '已移除' } }
+}
+
+// 设置店铺门头照（仅老板）：fileID 存本店老板文档，替换时删旧图，防云存储堆积
+async function setStorePhoto(event) {
+  const { fileID, _role, _store_id } = event
+  if (_role !== 'boss') return { code: 1, message: '仅老板可设置' }
+  if (!_store_id || !fileID) return { code: 1, message: '参数缺失' }
+  const doc = await db.collection('users').doc(_store_id).get()
+  if (!doc.data) return { code: 1, message: '店铺不存在' }
+  const old = doc.data.store_photo
+  await db.collection('users').doc(_store_id).update({
+    data: { store_photo: fileID, updated_at: db.serverDate() }
+  })
+  if (old && old !== fileID) {
+    try { await cloud.deleteFile({ fileList: [old] }) } catch (e) { /* 旧图删除失败不影响 */ }
+  }
+  return { code: 0, data: { message: '已保存' } }
 }
 
 // 老数据一次性迁移：早期没有 store_id 的手机/流水归到 admin 店

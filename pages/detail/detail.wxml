@@ -118,9 +118,13 @@
   <!-- 底部操作 -->
   <view class="action-bar" wx:if="{{saleable || sold}}">
     <button wx:if="{{saleable}}" class="btn-primary" bindtap="goSell">卖出</button>
+    <button class="btn-default action-margin" bindtap="onMakePoster">海报</button>
     <button wx:if="{{saleable}}" class="btn-default action-margin" bindtap="goEdit">编辑</button>
     <button wx:if="{{inStock && isBoss}}" class="btn-danger action-margin" bindtap="onDelete">删除</button>
     <button wx:if="{{sold}}" class="btn-warn action-margin" bindtap="onReturn">退货入库</button>
   </view>
+
+  <!-- 海报画布（移出屏幕，不占布局） -->
+  <canvas type="2d" id="posterCanvas" class="poster-canvas"></canvas>
 
 </view>

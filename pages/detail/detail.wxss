@@ -1,4 +1,12 @@
 /* pages/detail/detail.wxss - 手机详情 */
+.poster-canvas {
+  position: fixed;
+  left: -9999px;
+  top: 0;
+  width: 750px;
+  height: 3000px;
+}
+
 .detail-header {
   display: flex;
   justify-content: space-between;

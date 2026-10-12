@@ -1,10 +1,13 @@
 <!-- pages/index/index.wxml - 首页看板 -->
 <view class="container">
 
-  <!-- 品牌横幅 -->
+  <!-- 品牌横幅：门头照（未设置时深蓝底 + 店名） -->
   <view class="banner">
-    <view class="banner-title">{{storeName}}</view>
-    <view class="banner-date">{{dateText}}</view>
+    <image wx:if="{{storePhoto}}" class="banner-img" src="{{storePhoto}}" mode="aspectFill" bindtap="onBannerTap" />
+    <view wx:else class="banner-fallback" bindtap="onBannerTap">
+      <view class="banner-name">{{storeName}}</view>
+      <view class="banner-hint" wx:if="{{isBoss}}">＋ 设门头照</view>
+    </view>
   </view>
 
   <!-- 库存统计卡片 -->
@@ -31,10 +34,6 @@
         <view class="money-value income">+{{today.income}}</view>
       </view>
       <view class="money-item">
-        <view class="money-label">今日支出</view>
-        <view class="money-value expense">-{{today.expense}}</view>
-      </view>
-      <view class="money-item">
         <view class="money-label">今日利润</view>
         <view class="money-value profit">{{today.profit}}</view>
       </view>
@@ -43,10 +42,6 @@
       <view class="money-item">
         <view class="money-label">本月收入</view>
         <view class="money-value income">+{{month.income}}</view>
-      </view>
-      <view class="money-item">
-        <view class="money-label">本月支出</view>
-        <view class="money-value expense">-{{month.expense}}</view>
       </view>
       <view class="money-item">
         <view class="money-label">本月利润</view>
