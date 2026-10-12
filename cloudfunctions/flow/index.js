@@ -46,26 +46,34 @@ async function list(event) {
 }
 
 // 收支统计：day 按日 / month 按月，返回序列 [{key, income, expense, profit}]
+// income/expense 为现金流（收机支出、卖机收入、退货冲减）；profit 为已实现销售毛利（只算已卖未退机）
 async function summary(event) {
   const { _store_id, startDate, endDate, granularity = 'day' } = event
   if (!_store_id) return { code: 1, message: '未登录' }
-  let where = { store_id: _store_id }
-  if (startDate && endDate) {
-    where.date = _.gte(startDate).and(_.lte(endDate))
-  }
-
-  // 拉区间内全部流水（单店量级，单次上限1000足够）
-  const res = await db.collection('flows').where(where).limit(1000).get()
-
   const map = {}
-  res.data.forEach(f => {
-    const key = granularity === 'month' ? (f.date || '').slice(0, 7) : (f.date || '')
+
+  // 现金流（收入/支出）
+  let flowWhere = { store_id: _store_id }
+  if (startDate && endDate) flowWhere.date = _.gte(startDate).and(_.lte(endDate))
+  const flowRes = await db.collection('flows').where(flowWhere).limit(1000).get()
+  flowRes.data.forEach(f => {
+    const key = keyOf(granularity, f.date)
     if (!key) return
     if (!map[key]) map[key] = { key, income: 0, expense: 0, profit: 0 }
     const c = classify(f)
     map[key].income += c.income
     map[key].expense += c.expense
-    map[key].profit += c.income - c.expense
+  })
+
+  // 利润：已实现销售毛利（status=1 卖价-成本），按卖出日期归属区间；在库/退货机不计利润
+  let soldWhere = { status: 1, store_id: _store_id }
+  if (startDate && endDate) soldWhere.sell_date = _.gte(startDate).and(_.lte(endDate))
+  const soldRes = await db.collection('phones').where(soldWhere).limit(1000).get()
+  soldRes.data.forEach(p => {
+    const key = keyOf(granularity, p.sell_date)
+    if (!key) return
+    if (!map[key]) map[key] = { key, income: 0, expense: 0, profit: 0 }
+    map[key].profit += (Number(p.sell_price) || 0) - (Number(p.cost_price) || 0)
   })
 
   const list = Object.values(map)
@@ -73,6 +81,23 @@ async function summary(event) {
     .sort((a, b) => a.key.localeCompare(b.key))
 
   return { code: 0, data: { list } }
+}
+
+function keyOf(granularity, date) {
+  return granularity === 'month' ? (date || '').slice(0, 7) : (date || '')
+}
+
+// 已实现销售毛利：只算已卖未退（status=1）的手机，按卖出日期归属区间
+async function soldProfit(storeId, start, end) {
+  const r = await db.collection('phones')
+    .where({ status: 1, sell_date: _.gte(start).and(_.lte(end)), store_id: storeId })
+    .limit(1000)
+    .get()
+  let profit = 0
+  r.data.forEach(p => {
+    profit += (Number(p.sell_price) || 0) - (Number(p.cost_price) || 0)
+  })
+  return Number(profit.toFixed(2))
 }
 
 // 首页看板：库存数量 + 今日/本月收支利润 + 最近流水
@@ -99,15 +124,17 @@ async function dashboard(event) {
       expense += c.expense
     })
     const round2 = n => Number(n.toFixed(2))
-    return { income: round2(income), expense: round2(expense), profit: round2(income - expense) }
+    return { income: round2(income), expense: round2(expense) }
   }
 
-  const [inStock, sold, returned, todaySum, monthSum] = await Promise.all([
+  const [inStock, sold, returned, todaySum, monthSum, todayProfit, monthProfit] = await Promise.all([
     countByStatus(0),
     countByStatus(1),
     countByStatus(2),
     sumRange(today, today),
-    sumRange(monthStart, today)
+    sumRange(monthStart, today),
+    soldProfit(_store_id, today, today),
+    soldProfit(_store_id, monthStart, today)
   ])
 
   const recentRes = await db.collection('flows')
@@ -118,13 +145,21 @@ async function dashboard(event) {
     .get()
   const recentFlows = await attachPhone(recentRes.data, _store_id)
 
+  // 店铺门头照：存在本店老板（store_id = 老板 _id）的 users 文档里
+  let storePhoto = ''
+  try {
+    const bossRes = await db.collection('users').doc(_store_id).get()
+    storePhoto = (bossRes.data && bossRes.data.store_photo) || ''
+  } catch (e) { /* 无此文档则无照片 */ }
+
   return {
     code: 0,
     data: {
       counts: { in_stock: inStock, sold, returned },
-      today: todaySum,
-      month: monthSum,
-      recentFlows
+      today: { ...todaySum, profit: todayProfit },
+      month: { ...monthSum, profit: monthProfit },
+      recentFlows,
+      store_photo: storePhoto
     }
   }
 }
