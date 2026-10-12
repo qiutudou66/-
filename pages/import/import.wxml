@@ -1,0 +1,96 @@
+<!-- pages/import/import.wxml - 批量导入 -->
+<view class="container">
+
+  <!-- 选文件 -->
+  <block wx:if="{{state === 'idle'}}">
+    <view class="card">
+      <view class="tip-title">批量导入手机数据</view>
+      <view class="tip-text">支持通讯邦导出的 .xlsx / .xls 表格</view>
+      <view class="tip-text">表头需包含：序列号、品牌、型号、入库价（可含入库时间 / 文案 / 零售价）</view>
+      <view class="tip-text">先解析预览，确认无误再写入，不会重复录入</view>
+    </view>
+
+    <button class="btn-primary" wx:if="{{!fileName}}" bindtap="onChooseFile">选择 Excel 文件</button>
+    <block wx:else>
+      <view class="card">
+        <view class="file-name">{{fileName}}</view>
+        <button class="btn-primary" bindtap="onUpload">解析并预览</button>
+        <view class="tip-text center">换个文件请<text class="link" bindtap="onChooseFile">重新选择</text></view>
+      </view>
+    </block>
+  </block>
+
+  <!-- 解析预览 -->
+  <block wx:if="{{state === 'preview'}}">
+    <view class="summary-bar">
+      <view class="summary-item">
+        <view class="summary-label">共识别</view>
+        <view class="summary-value">{{summary.total}}</view>
+      </view>
+      <view class="summary-item">
+        <view class="summary-label">可导入</view>
+        <view class="summary-value" style="color:#52c41a">{{summary.ready}}</view>
+      </view>
+      <view class="summary-item">
+        <view class="summary-label">有问题</view>
+        <view class="summary-value" style="color:#ff4d4f">{{summary.withIssues}}</view>
+      </view>
+      <view class="summary-item">
+        <view class="summary-label">占位</view>
+        <view class="summary-value" style="color:#fa8c16">{{summary.placeholder}}</view>
+      </view>
+    </view>
+    <view class="tip-text" wx:if="{{truncated}}">文件超过 300 行，仅预览前 300 行，请分批导入</view>
+
+    <scroll-view scroll-y class="preview-list">
+      <view class="card row-card" wx:for="{{rows}}" wx:key="rowIndex">
+        <view class="row-head">
+          <text class="row-no">第{{item.rowIndex}}行</text>
+          <text class="row-imei">{{item.imei || '（无序列号）'}}</text>
+        </view>
+        <view class="row-main">{{item.brand}} {{item.model}} · {{item.memory || '？容量'}} · {{item.color || '？颜色'}} · {{item.battery || '？电池'}}</view>
+        <view class="row-sub">成本 ¥{{item.cost_price == null ? '?' : item.cost_price}} ｜ 零售 ¥{{item.expect_price == null ? '-' : item.expect_price}} ｜ {{item.recycle_date || '日期待定'}}</view>
+        <view class="tag tag-red" wx:for="{{item.issues}}" wx:for-item="iss" wx:key="*this">{{iss}}</view>
+        <view class="tag tag-orange" wx:for="{{item.warnings}}" wx:for-item="warn" wx:key="*this">{{warn}}</view>
+      </view>
+      <view class="empty" wx:if="{{rows.length === 0}}">没有识别到数据行</view>
+    </scroll-view>
+
+    <button class="btn-primary" bindtap="onConfirm" disabled="{{summary.ready <= 0}}">确认导入 {{summary.ready}} 行</button>
+  </block>
+
+  <!-- 导入结果 -->
+  <block wx:if="{{state === 'result'}}">
+    <view class="summary-bar">
+      <view class="summary-item">
+        <view class="summary-label">成功</view>
+        <view class="summary-value" style="color:#52c41a">{{result.ok}}</view>
+      </view>
+      <view class="summary-item">
+        <view class="summary-label">重复跳过</view>
+        <view class="summary-value" style="color:#fa8c16">{{result.skipped}}</view>
+      </view>
+      <view class="summary-item">
+        <view class="summary-label">失败</view>
+        <view class="summary-value" style="color:#ff4d4f">{{result.failed}}</view>
+      </view>
+    </view>
+
+    <scroll-view scroll-y class="preview-list" wx:if="{{result.items.length > 0}}">
+      <view class="card row-card" wx:for="{{result.items}}" wx:key="rowIndex">
+        <view class="row-head">
+          <text class="row-no">第{{item.rowIndex}}行</text>
+          <text class="row-imei">{{item.imei}}</text>
+        </view>
+        <view class="row-sub err">{{item.message}}</view>
+      </view>
+    </scroll-view>
+    <view class="empty" wx:else>全部导入成功</view>
+
+    <view class="btn-row">
+      <button class="btn-default" bindtap="onReset">再导一份</button>
+      <button class="btn-primary" bindtap="goStock">去库存查看</button>
+    </view>
+  </block>
+
+</view>

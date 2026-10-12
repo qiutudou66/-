@@ -35,6 +35,18 @@
     <view class="empty" wx:if="{{employees.length === 0 && !showAdd}}">还没有员工账号</view>
   </view>
 
+  <!-- 数据管理（仅老板） -->
+  <view class="card" wx:if="{{isBoss}}">
+    <view class="me-section-header"><text>数据管理</text></view>
+    <view class="emp-item" bindtap="onGoImport">
+      <view>
+        <view class="emp-name">批量导入手机数据</view>
+        <view class="emp-sub">从通讯邦导出的 Excel 批量录入</view>
+      </view>
+      <text class="me-add">›</text>
+    </view>
+  </view>
+
   <button class="btn-danger" bindtap="onLogout">退出登录</button>
 
 </view>

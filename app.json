@@ -9,6 +9,7 @@
     "pages/sell/sell",
     "pages/return/return",
     "pages/flow/list/list",
+    "pages/import/import",
     "pages/me/me"
   ],
   "window": {

@@ -1,5 +1,5 @@
 <!-- pages/stock/list/list.wxml - 库存列表 -->
-<view class="container">
+<view class="container {{manageMode ? 'manage-mode' : ''}}">
   <!-- 状态 tab -->
   <view class="status-tabs">
     <view
@@ -29,32 +29,54 @@
     </picker>
   </view>
 
-  <view class="stock-count">共 {{total}} 台</view>
+  <view class="count-row">
+    <view class="stock-count">共 {{total}} 台</view>
+    <view wx:if="{{isBoss && activeStatus === 0}}" class="manage-entry {{manageMode ? 'active' : ''}}" bindtap="onManageEntryTap">
+      {{manageMode ? '取消' : '批量删除'}}
+    </view>
+  </view>
 
   <block wx:if="{{list.length > 0}}">
-    <view class="card" wx:for="{{list}}" wx:key="_id" bindtap="goDetail" data-id="{{item._id}}">
-      <view class="prod-header">
-        <text class="prod-name">{{item.brand}} {{item.model}}</text>
-        <text class="tag {{item.statusClass}}">{{item.statusText}}</text>
-      </view>
-      <view class="prod-info">
-        <text>{{item.memory}}</text>
-        <text>{{item.color || '-'}}</text>
-        <text>{{item.gradeText}}</text>
-      </view>
-      <view class="prod-info">
-        <text class="imei">IMEI: {{item.imei}}</text>
-      </view>
-      <view class="prod-footer">
-        <view>
-          <text>成本 ¥{{item.cost_price}}</text>
-          <text class="price-small" wx:if="{{item.expectText}}">标价 ¥{{item.expectText}}</text>
+    <view
+      class="card card-selectable {{manageMode && selectedIds.indexOf(item._id) > -1 ? 'card-selected' : ''}}"
+      wx:for="{{list}}"
+      wx:key="_id"
+      bindtap="onCardTap"
+      data-id="{{item._id}}"
+      data-status="{{item.status}}"
+    >
+      <view class="card-body">
+        <view class="prod-header">
+          <text class="prod-name">{{item.brand}} {{item.model}}</text>
+          <text class="tag {{item.statusClass}}">{{item.statusText}}</text>
         </view>
-        <button wx:if="{{item.status === 1}}" class="row-btn" catchtap="onReturn" data-id="{{item._id}}">退货</button>
+        <view class="prod-info">
+          <text>{{item.memory}}</text>
+          <text>{{item.color || '-'}}</text>
+          <text>{{item.gradeText}}</text>
+        </view>
+        <view class="prod-info">
+          <text class="imei">IMEI: {{item.imei}}</text>
+        </view>
+        <view class="prod-footer">
+          <view>
+            <text>成本 ¥{{item.cost_price}}</text>
+            <text class="price-small" wx:if="{{item.expectText}}">标价 ¥{{item.expectText}}</text>
+          </view>
+          <button wx:if="{{item.status === 1 && !manageMode}}" class="row-btn" catchtap="onReturn" data-id="{{item._id}}">退货</button>
+        </view>
+      </view>
+      <view wx:if="{{manageMode}}" class="check-circle {{item.status !== 0 ? 'disabled' : ''}} {{selectedIds.indexOf(item._id) > -1 ? 'checked' : ''}}">
+        <text wx:if="{{selectedIds.indexOf(item._id) > -1}}">✓</text>
       </view>
     </view>
   </block>
   <view class="empty" wx:else>暂无手机</view>
 
-  <view class="fab" bindtap="goRecycle">＋</view>
+  <view class="fab" wx:if="{{!manageMode}}" bindtap="goRecycle">＋</view>
+
+  <view class="manage-bar" wx:if="{{manageMode}}">
+    <text class="manage-count">已选 {{selectedIds.length}} 台</text>
+    <button class="btn-danger manage-delete" bindtap="doBatchDelete" disabled="{{selectedIds.length === 0}}">删除</button>
+  </view>
 </view>

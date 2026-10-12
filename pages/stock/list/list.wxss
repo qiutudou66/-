@@ -42,10 +42,104 @@
   background: #e6f7ff;
 }
 
+.count-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+
 .stock-count {
   font-size: 24rpx;
   color: #999;
-  margin-bottom: 12rpx;
+}
+
+.manage-entry {
+  font-size: 24rpx;
+  color: #1890ff;
+  padding: 4rpx 16rpx;
+  border: 2rpx solid #1890ff;
+  border-radius: 8rpx;
+}
+
+.manage-entry.active {
+  color: #999;
+  border-color: #d9d9d9;
+}
+
+/* 管理模式：卡片可勾选 */
+.card-selectable {
+  display: flex;
+  align-items: flex-start;
+}
+
+.card-selectable.card-selected {
+  border: 2rpx solid #1890ff;
+}
+
+.card-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.check-circle {
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  border: 2rpx solid #d9d9d9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  color: #fff;
+  margin-left: 16rpx;
+  flex-shrink: 0;
+  margin-top: 6rpx;
+}
+
+.check-circle.checked {
+  background: #1890ff;
+  border-color: #1890ff;
+}
+
+.check-circle.disabled {
+  background: #f5f5f5;
+  border-color: #e0e0e0;
+}
+
+/* 批量删除底部操作栏 */
+.manage-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  padding: 20rpx 32rpx;
+  box-shadow: 0 -2rpx 12rpx rgba(0, 0, 0, 0.08);
+  z-index: 50;
+}
+
+.manage-count {
+  font-size: 28rpx;
+  color: #333;
+}
+
+.manage-delete {
+  width: 240rpx;
+  padding: 14rpx 0;
+  line-height: 1.6;
+}
+
+.manage-delete[disabled] {
+  background: #ccc;
+  box-shadow: none;
+}
+
+.manage-mode {
+  padding-bottom: 160rpx;
 }
 
 .prod-header {

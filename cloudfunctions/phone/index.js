@@ -23,6 +23,7 @@ exports.main = async (event) => {
     case 'create': return await create(event)
     case 'update': return await update(event)
     case 'remove': return await remove(event)
+    case 'removeBatch': return await removeBatch(event)
     case 'sell': return await sell(event)
     case 'customerReturn': return await customerReturn(event)
     default: return { code: 1, message: '未知操作' }
@@ -192,11 +193,51 @@ async function remove(event) {
     if (phone.status !== 0) return { ok: false, message: '仅在库手机可删除' }
     await transaction.collection('phones').doc(id).remove()
     await transaction.collection('flows').where({ phone_id: id }).remove()
-    return { ok: true }
+    return { ok: true, images: phone.images || [] }
   })
 
   if (!result.ok) return { code: 1, message: result.message }
+  // 连带删除云存储照片，释放存储额度；删除失败不影响记录删除结果
+  const files = (result.images || []).filter(Boolean)
+  if (files.length > 0) {
+    try { await cloud.deleteFile({ fileList: files }) } catch (e) { console.error('删除云存储照片失败', e) }
+  }
   return { code: 0, data: { message: '已删除' } }
+}
+
+// 批量删除入库记录（仅老板 + 仅在库）：单事务内逐台删 phone + 该机流水，非在库/不存在的自动跳过
+async function removeBatch(event) {
+  const { ids, _store_id, _role } = event
+  if (!_store_id) return { code: 1, message: '未登录' }
+  if (_role !== 'boss') return { code: 1, message: '仅老板可删除' }
+  if (!Array.isArray(ids) || ids.length === 0) return { code: 1, message: '参数缺失' }
+  if (ids.length > 40) return { code: 1, message: '一次最多删除 40 台' }
+
+  const result = await db.runTransaction(async transaction => {
+    let removed = 0, skipped = 0
+    const images = []
+    for (const id of ids) {
+      let phone
+      try {
+        const phoneRes = await transaction.collection('phones').doc(id).get()
+        phone = phoneRes.data
+      } catch (e) { phone = null }
+      if (!phone || phone.store_id !== _store_id || phone.status !== 0) { skipped++; continue }
+      await transaction.collection('phones').doc(id).remove()
+      await transaction.collection('flows').where({ phone_id: id }).remove()
+      removed++
+      if (Array.isArray(phone.images)) images.push(...phone.images.filter(Boolean))
+    }
+    return { ok: true, removed, skipped, images }
+  })
+
+  if (!result.ok) return { code: 1, message: result.message }
+  // 连带删除云存储照片，释放存储额度；删除失败不影响记录删除结果
+  const files = result.images.filter(Boolean)
+  if (files.length > 0) {
+    try { await cloud.deleteFile({ fileList: files }) } catch (e) { console.error('删除云存储照片失败', e) }
+  }
+  return { code: 0, data: { removed: result.removed, skipped: result.skipped } }
 }
 
 // 卖机：事务内改状态 + 记收入流水

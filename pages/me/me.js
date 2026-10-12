@@ -83,6 +83,10 @@ Page({
     })
   },
 
+  onGoImport() {
+    wx.navigateTo({ url: '/pages/import/import' })
+  },
+
   onLogout() {
     clearUserInfo()
     wx.reLaunch({ url: '/pages/login/login' })

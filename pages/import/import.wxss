@@ -1,0 +1,77 @@
+/* pages/import/import.wxss */
+.tip-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  margin-bottom: 12rpx;
+}
+
+.tip-text {
+  font-size: 24rpx;
+  color: #999;
+  margin-bottom: 8rpx;
+}
+
+.tip-text.center {
+  text-align: center;
+  margin-top: 16rpx;
+  margin-bottom: 0;
+}
+
+.link {
+  color: #1890ff;
+  margin: 0 4rpx;
+}
+
+.file-name {
+  font-size: 28rpx;
+  word-break: break-all;
+  margin-bottom: 20rpx;
+}
+
+.preview-list {
+  height: 58vh;
+  margin-bottom: 20rpx;
+}
+
+.row-card {
+  padding: 20rpx;
+  margin-bottom: 16rpx;
+}
+
+.row-head {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8rpx;
+}
+
+.row-no {
+  font-size: 22rpx;
+  color: #999;
+}
+
+.row-imei {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.row-main {
+  font-size: 28rpx;
+  margin-bottom: 4rpx;
+}
+
+.row-sub {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.row-sub.err {
+  color: #ff4d4f;
+}
+
+.btn-row {
+  display: flex;
+}
+
+.btn-row button + button {
+  margin-left: 20rpx;
+}
