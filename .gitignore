@@ -8,5 +8,10 @@ project.private.config.json
 .DS_Store
 Thumbs.db
 
+# 真实经营数据（通讯邦导出/库存明细等，绝不入库）
+*.xlsx
+*.xls
+*.csv
+
 # 日志
 *.log
